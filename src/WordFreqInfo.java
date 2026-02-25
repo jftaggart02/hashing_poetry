@@ -40,6 +40,10 @@ public class WordFreqInfo {
         return this.occurCount;
     }
 
+    public String getFollowWord(int count) {
+
+    }
+
     private class Frequency {
         String follow;
         int followCount;
