@@ -15,7 +15,7 @@
  * Note that all "matching" is based on the equals method.
  * @author Mark Allen Weiss (based on code from)
  */
-public class HashTable<K> {
+public class HashTable<K, V> {
     /**
      * Construct the hash table.
      */
@@ -39,8 +39,9 @@ public class HashTable<K> {
      * Implementation issue: This routine doesn't allow you to use a lazily deleted location.  Do you see why?
      *
      * @param key the item to insert.
+     * @return true if the item inserted did not already exist in the hash table. False otherwise.
      */
-    public boolean insert(K key) {
+    public boolean insert(K key, V value) {
         // Insert x as active
         int currentPos = findPos(key);
         // If we already have it in the hash table, update with the new value
@@ -48,7 +49,7 @@ public class HashTable<K> {
             return false;
         }
 
-        storage[currentPos] = new HashEntry<>(key,  true);
+        storage[currentPos] = new HashEntry<>(key, value, true);
         currentActiveEntries++;
 
         // Rehash; see Section 5.5
@@ -64,7 +65,7 @@ public class HashTable<K> {
         int count = 0;
         for (int i = 0; i < storage.length && count < limit; i++) {
             if (storage[i] != null && storage[i].isActive) {
-                sb.append(String.format("%d: %s\n", i, storage[i].key));
+                sb.append(String.format("%d: %s[%s]\n", i, storage[i].key, storage[i].value));
                 count++;
             }
         }
@@ -75,7 +76,7 @@ public class HashTable<K> {
      * Expand the hash table.
      */
     private void rehash() {
-        HashEntry<K>[] oldArray = storage;
+        HashEntry<K, V>[] oldArray = storage;
 
         // Create a new double-sized, empty table
         allocateArray(2 * oldArray.length);
@@ -85,7 +86,7 @@ public class HashTable<K> {
         // Copy table over
         for (var entry : oldArray) {
             if (entry != null && entry.isActive) {
-                insert(entry.key);
+                insert(entry.key, entry.value);
             }
         }
     }
@@ -162,14 +163,14 @@ public class HashTable<K> {
      * Find an item in the hash table.
      *
      * @param x the item to search for.
-     * @return the matching item.
+     * @return the value of the item in the hash table.
      */
-    public K find(K x) {
+    public V find(K x) {
         int currentPos = findPos(x);
         if (!isActive(currentPos)) {
             return null;
         } else {
-            return storage[currentPos].key;
+            return storage[currentPos].value;
         }
     }
 
@@ -208,19 +209,21 @@ public class HashTable<K> {
         return hashVal;
     }
 
-    private class HashEntry<K> {
+    private class HashEntry<K, V> {
         public K key;   // the element
+        public V value;
         public boolean isActive;  // false if marked deleted
 
-        public HashEntry(K key, boolean active) {
+        public HashEntry(K key, V value, boolean active) {
             this.key = key;
+            this.value = value;
             this.isActive = active;
         }
     }
 
     private static final int DEFAULT_TABLE_SIZE = 101;
 
-    private HashEntry<K>[] storage; // The array of elements
+    private HashEntry<K, V>[] storage; // The array of elements
     private int occupiedCount;         // The number of occupied cells: active or deleted
     private int currentActiveEntries;                  // Current size
 
