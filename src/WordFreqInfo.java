@@ -42,6 +42,15 @@ public class WordFreqInfo {
 
     public String getFollowWord(int count) {
 
+        int currentCount = 0;
+        for (Frequency f : followList) {
+            if (count < f.followCount + currentCount) {
+                return f.follow;
+            }
+            currentCount += f.followCount;
+        }
+        System.out.println("Warning: 'count' is too high! Defaulting to last word in 'followList'");
+        return followList.getLast().follow;
     }
 
     private class Frequency {
