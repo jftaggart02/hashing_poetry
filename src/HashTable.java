@@ -73,47 +73,6 @@ public class HashTable<K, V> {
     }
 
     /**
-     * Expand the hash table.
-     */
-    private void rehash() {
-        HashEntry<K, V>[] oldArray = storage;
-
-        // Create a new double-sized, empty table
-        allocateArray(2 * oldArray.length);
-        occupiedCount = 0;
-        currentActiveEntries = 0;
-
-        // Copy table over
-        for (var entry : oldArray) {
-            if (entry != null && entry.isActive) {
-                insert(entry.key, entry.value);
-            }
-        }
-    }
-
-    /**
-     * Method that performs quadratic probing resolution.
-     *
-     * @param x the item to search for.
-     * @return the position where the search terminates.
-     * Never returns an inactive location.
-     */
-    private int findPos(K x) {
-        int offset = 1;
-        int currentPos = myHash(x);
-
-        while (storage[currentPos] != null && !storage[currentPos].key.equals(x)) {
-            currentPos += offset;  // Compute ith probe
-            offset += 2;
-            if (currentPos >= storage.length) {
-                currentPos -= storage.length;
-            }
-        }
-
-        return currentPos;
-    }
-
-    /**
      * Remove from the hash table.
      *
      * @param x the item to remove.
@@ -175,6 +134,54 @@ public class HashTable<K, V> {
     }
 
     /**
+     * Make the hash table logically empty.
+     */
+    public void makeEmpty() {
+        doClear();
+    }
+
+    /**
+     * Expand the hash table.
+     */
+    private void rehash() {
+        HashEntry<K, V>[] oldArray = storage;
+
+        // Create a new double-sized, empty table
+        allocateArray(2 * oldArray.length);
+        occupiedCount = 0;
+        currentActiveEntries = 0;
+
+        // Copy table over
+        for (var entry : oldArray) {
+            if (entry != null && entry.isActive) {
+                insert(entry.key, entry.value);
+            }
+        }
+    }
+
+    /**
+     * Method that performs quadratic probing resolution.
+     *
+     * @param x the item to search for.
+     * @return the position where the search terminates.
+     * Never returns an inactive location.
+     */
+    private int findPos(K x) {
+        int offset = 1;
+        int currentPos = myHash(x);
+
+        while (storage[currentPos] != null && !storage[currentPos].key.equals(x)) {
+            currentPos += offset;  // Compute ith probe
+            offset += 2;
+            if (currentPos >= storage.length) {
+                currentPos -= storage.length;
+            }
+        }
+
+        return currentPos;
+    }
+
+    /**
      * Return true if currentPos exists and is active.
      *
      * @param currentPos the result of a call to findPos.
@@ -182,13 +189,6 @@ public class HashTable<K, V> {
      */
     private boolean isActive(int currentPos) {
         return storage[currentPos] != null && storage[currentPos].isActive;
-    }
-
-    /**
-     * Make the hash table logically empty.
-     */
-    public void makeEmpty() {
-        doClear();
     }
 
     private void doClear() {

@@ -17,7 +17,7 @@ public class WritePoetry {
      *
      * @return The generated poem.
      * */
-    public String writePoem(String file, String startWord, int length, boolean printHashtable) {
+    public static String writePoem(String file, String startWord, int length, boolean printHashtable) {
 
         startWord = startWord.toLowerCase();
 
@@ -134,10 +134,16 @@ public class WritePoetry {
 
     }
 
+    /**
+     * Indicate if a string is a punctuation mark.
+     * */
     private static boolean isPunctuation(String s) {
         return s.length() == 1 && Pattern.matches("\\p{IsPunctuation}", s);
     }
 
+    /**
+     * Indicate if a character is punctuation.
+     * */
     private static boolean isPunctuation(char c) {
         String s = String.valueOf(c);
         return Pattern.matches("\\p{IsPunctuation}", s);

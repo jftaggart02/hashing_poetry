@@ -1,9 +1,6 @@
 import java.util.*;
 
 public class WordFreqInfo {
-    private String word;
-    private int occurCount;
-    private ArrayList<Frequency> followList;
 
     public WordFreqInfo(String word, int count) {
         this.word = word;
@@ -40,8 +37,14 @@ public class WordFreqInfo {
         return this.occurCount;
     }
 
+    /**
+     * Create a categorical probability distribution based on the occurrence counts of each of the following words.
+     * Given a number in the distribution ("count" parameter), output the category it lies in (the following word).
+     *
+     * @param count A number (from 0 to "occurCount").
+     * @return The following word.
+     * */
     public String getFollowWord(int count) {
-
         int currentCount = 0;
         for (Frequency f : followList) {
             if (count < f.followCount + currentCount) {
@@ -53,7 +56,11 @@ public class WordFreqInfo {
         return followList.getLast().follow;
     }
 
-    private class Frequency {
+    private String word;
+    private int occurCount;  // occurrences of "word" in the document
+    private ArrayList<Frequency> followList;  // A list of words that follow "word" and how many times they followed it.
+
+    private static class Frequency {
         String follow;
         int followCount;
 
