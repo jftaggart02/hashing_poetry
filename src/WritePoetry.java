@@ -19,6 +19,8 @@ public class WritePoetry {
      * */
     public String writePoem(String file, String startWord, int length, boolean printHashtable) {
 
+        startWord = startWord.toLowerCase();
+
         // Read the file and create an array list of strings, where each string is a word or punctuation mark.
         var words = new ArrayList<String>();
         try (var scanner = new Scanner(new File(file))) {
